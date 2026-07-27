@@ -1,243 +1,157 @@
 # 🎯 Number Guessing Dashboard
 
 <p align="center">
-
-<img src="docs/images/banner.svg" alt="Number Guessing Dashboard Banner" width="100%"/>
-
+  <img src="screenshots/hero-banner.png" alt="Number Guessing Dashboard Banner" width="100%">
 </p>
 
 <p align="center">
 
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge\&logo=fastapi\&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge\&logo=javascript\&logoColor=black)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge\&logo=html5\&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge\&logo=css3\&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+A modern, interactive Number Guessing Game built with **FastAPI**, **Python**, **HTML**, **CSS**, and **Vanilla JavaScript**.
+
+Designed with a premium glassmorphism interface, responsive layout, and polished user experience.
 
 </p>
 
 ---
 
-## 📖 Overview
-
-**Number Guessing Dashboard** is a modern browser-based implementation of the classic Number Guessing Game.
-
-The project transforms a traditional console application into an interactive web dashboard using **FastAPI**, **Vanilla JavaScript**, **HTML**, and **CSS**, while preserving the original game logic.
-
-It is designed as a clean learning project demonstrating:
-
-* Backend API development
-* Frontend and backend communication
-* RESTful architecture
-* Modern UI principles
-* Progressive project development
-
----
-
-## ✨ Features
-
-* 🎮 Interactive browser gameplay
-* ⚡ FastAPI backend
-* 🌐 REST API communication
-* 🎯 Real-time guess evaluation
-* 🔢 Input validation
-* 📊 Attempt tracking
-* 🔄 Restart game functionality
-* 🧩 Lightweight architecture
-* 📱 Responsive layout
-* 🎨 Modern UI foundation
-
----
-
-## 📷 Preview
-
-### Dashboard
+## 🖥️ Dashboard Preview
 
 <p align="center">
-
-<img src="docs/images/dashboard.png" width="90%">
-
-</p>
-
-### Gameplay
-
-<p align="center">
-
-<img src="docs/images/gameplay.gif" width="90%">
-
+  <img src="screenshots/dashboard.png" alt="Number Guessing Dashboard" width="900">
 </p>
 
 ---
 
-## 🏗 Architecture
+# ✨ Features
 
-```text
-┌─────────────────────────────┐
-│         Browser UI          │
-│ HTML • CSS • JavaScript     │
-└──────────────┬──────────────┘
-               │ Fetch API
-               ▼
-┌─────────────────────────────┐
-│          FastAPI            │
-│       REST Endpoints        │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│       Game Logic Engine     │
-│ Random Number • Validation  │
-│ Attempts • Win/Lose Rules   │
-└─────────────────────────────┘
-```
+- 🎮 Interactive Number Guessing Game
+- ⚡ FastAPI Backend
+- 🎨 Modern Glassmorphism UI
+- 📱 Fully Responsive Design
+- ⌨️ Keyboard Accessibility
+- ✨ Smooth Animations & Transitions
+- 🔄 Real-Time Gameplay
+- 🧩 Clean Modular Architecture
+- 🛠️ Well-Structured Frontend Code
+- 🚀 One-Click Launch Support
+
+---
+
+# 🛠️ Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Python | Backend Logic |
+| FastAPI | REST API |
+| HTML5 | Structure |
+| CSS3 | Styling |
+| Vanilla JavaScript | Frontend Logic |
 
 ---
 
 # 📂 Project Structure
 
 ```text
-number_guessing_dashboard/
-
+number-guessing-game/
+│
 ├── backend/
 │   ├── app.py
 │   ├── game_logic.py
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── __init__.py
 │
 ├── frontend/
 │   ├── index.html
 │   ├── style.css
 │   └── script.js
 │
-├── docs/
-│   └── images/
+├── screenshots/
+│   ├── hero-banner.png
+│   └── dashboard.png
 │
+├── start_game.bat
 ├── README.md
-└── LICENSE
+└── .gitignore
 ```
 
 ---
 
 # 🚀 Getting Started
 
-## Clone Repository
+Clone the repository:
 
 ```bash
-git clone https://github.com/<username>/number_guessing_dashboard.git
+git clone https://github.com/Gagann-09/number-guessing-game.git
 ```
+
+Move into the project:
 
 ```bash
-cd number_guessing_dashboard
+cd number-guessing-game
 ```
 
----
-
-## Install Dependencies
+Install dependencies:
 
 ```bash
 pip install -r backend/requirements.txt
 ```
 
----
-
-## Run Application
+Run the application:
 
 ```bash
 uvicorn backend.app:app --reload
 ```
 
-Open your browser:
+or simply double-click:
 
+```text
+start_game.bat
 ```
+
+Open:
+
+```text
 http://127.0.0.1:8000
 ```
 
 ---
 
-# 🔌 API Endpoints
+# 🎮 Gameplay
 
-| Method | Endpoint   | Description    |
-| ------ | ---------- | -------------- |
-| GET    | `/`        | Load dashboard |
-| POST   | `/start`   | Start new game |
-| POST   | `/guess`   | Submit guess   |
-| POST   | `/restart` | Restart game   |
-
----
-
-# 🛠 Technology Stack
-
-| Category        | Technologies            |
-| --------------- | ----------------------- |
-| Backend         | Python, FastAPI         |
-| Frontend        | HTML5, CSS3, JavaScript |
-| API             | REST                    |
-| Version Control | Git, GitHub             |
+1. Start a new game.
+2. Enter a number.
+3. Receive hints.
+4. Continue guessing until you find the correct number.
+5. Start a new round.
 
 ---
 
-# 📌 Development Roadmap
+# 📸 Screenshots
 
-* ✅ Phase 1 — Project Foundation
-* ✅ Phase 2 — Browser Integration
-* ⏳ Phase 3 — Modern Dashboard UI
-* ⏳ Phase 4 — Statistics
-* ⏳ Phase 5 — Enhanced User Experience
-* ⏳ Phase 6 — Deployment
+| Home Screen |
+|------------|
+| <img src="screenshots/dashboard.png" width="800"> |
 
 ---
 
-# 📸 Assets
+# 📈 Future Improvements
 
-Create the following folder:
-
-```text
-docs/
-└── images/
-```
-
-Recommended files:
-
-```
-banner.svg
-dashboard.png
-gameplay.gif
-architecture.svg
-logo.svg
-```
-
----
-
-# 🤝 Contributing
-
-Contributions, suggestions, and improvements are welcome.
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Open a Pull Request
+- Difficulty Levels
+- Score Tracking
+- Multiplayer Mode
+- Deployment
+- Progressive Web App (PWA)
 
 ---
 
 # 📄 License
 
-This project is released under the MIT License.
-
----
-
-# 👨‍💻 Author
-
-**Gagan Narendra**
-
-Computer Science Engineering • AI & Machine Learning
-
-GitHub: https://github.com/<your-username>
+This project is licensed under the MIT License.
 
 ---
 
 <p align="center">
 
-Made with ❤️ using Python, FastAPI and JavaScript
+Made with ❤️ using FastAPI & Python
 
 </p>

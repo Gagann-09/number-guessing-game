@@ -1,7 +1,10 @@
+import pathlib
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from backend import game_logic
+
+FRONTEND_DIR = pathlib.Path(__file__).resolve().parent.parent / "frontend"
 
 app = FastAPI(title="Number Guessing Dashboard")
 
@@ -10,15 +13,15 @@ class GuessRequest(BaseModel):
 
 @app.get("/")
 def read_root():
-    return FileResponse("frontend/index.html")
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 @app.get("/style.css")
 def get_style():
-    return FileResponse("frontend/style.css")
+    return FileResponse(FRONTEND_DIR / "style.css")
 
 @app.get("/script.js")
 def get_script():
-    return FileResponse("frontend/script.js")
+    return FileResponse(FRONTEND_DIR / "script.js")
 
 @app.post("/start")
 def start():
