@@ -134,16 +134,6 @@ http://127.0.0.1:8000
 
 ---
 
-# 📈 Future Improvements
-
-- Difficulty Levels
-- Score Tracking
-- Multiplayer Mode
-- Deployment
-- Progressive Web App (PWA)
-
----
-
 # 📄 License
 
 This project is licensed under the MIT License.
