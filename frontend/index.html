@@ -11,29 +11,32 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="dashboard-card" id="card">
-        <h1>Number Guessing Dashboard</h1>
+    <main class="dashboard-card" id="card" aria-labelledby="dashboard-title">
+        <h1 id="dashboard-title">Number Guessing Dashboard</h1>
         <p class="subtitle">Can you guess the secret number?</p>
         
         <div id="game-setup">
-            <button id="start-btn" class="primary-btn">Start Game</button>
+            <button id="start-btn" class="primary-btn" aria-label="Start Game">Start Game</button>
         </div>
 
         <div id="game-active" style="display: none;">
             <div class="input-group">
-                <input type="number" id="guess-input" placeholder="Enter a number" aria-label="Enter a number">
-                <button id="guess-btn" class="primary-btn">Submit Guess</button>
+                <input type="number" id="guess-input" placeholder="Enter a number" aria-label="Enter your guess">
+                <button id="guess-btn" class="primary-btn" aria-label="Submit Guess">Submit Guess</button>
             </div>
             
-            <div class="status-container">
-                <p id="status-text">Click Start to play.</p>
-                <p id="attempts-text"></p>
+            <div class="status-container" aria-live="polite" aria-atomic="true">
+                <p id="status-text" role="status">Click Start to play.</p>
+                <div class="attempts-badge" id="attempts-badge" aria-label="Attempts remaining">
+                    <span class="attempts-label">Attempts Remaining</span>
+                    <span id="attempts-text" class="attempts-value"></span>
+                </div>
             </div>
         </div>
 
         <div id="game-over" style="display: none;">
-            <button id="restart-btn" class="secondary-btn">New Game</button>
+            <button id="restart-btn" class="secondary-btn" aria-label="Start New Game">New Game</button>
         </div>
-    </div>
+    </main>
 </body>
 </html>

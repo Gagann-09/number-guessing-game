@@ -12,16 +12,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const attemptsText = document.getElementById("attempts-text");
     const card = document.getElementById("card");
 
+    // UX: Auto-select existing value on focus
+    guessInput.addEventListener("focus", () => {
+        guessInput.select();
+    });
+
     function clearAnimationClasses() {
         card.classList.remove("shake", "pulse");
-        statusText.classList.remove("text-error", "text-success", "text-accent");
+        statusText.classList.remove("text-error", "text-success", "text-accent", "text-warning", "text-info");
         // Force reflow to allow restarting animations on the same element
         void card.offsetWidth;
     }
 
-    async function startGame() {
-        startBtn.disabled = true;
-        restartBtn.disabled = true;
+    function setLoading(btn, isLoading) {
+        if (isLoading) {
+            btn.classList.add("is-loading");
+            btn.setAttribute("aria-busy", "true");
+        } else {
+            btn.classList.remove("is-loading");
+            btn.removeAttribute("aria-busy");
+        }
+    }
+
+    async function startGame(e) {
+        const btn = e.target || startBtn;
+        btn.disabled = true;
+        setLoading(btn, true);
+        
         clearAnimationClasses();
         
         try {
@@ -33,19 +50,22 @@ document.addEventListener("DOMContentLoaded", () => {
             gameActive.style.display = "block";
             
             statusText.textContent = data.message;
-            statusText.classList.add("text-accent");
-            attemptsText.textContent = `Attempts left: ${data.max_attempts}`;
+            statusText.classList.add("text-info");
+            attemptsText.textContent = data.max_attempts;
+            
             guessInput.value = "";
             guessInput.disabled = false;
             guessBtn.disabled = false;
+            
+            // UX: Auto-focus input after a game starts
             guessInput.focus();
         } catch (error) {
             statusText.textContent = "Error: Could not reach the server.";
             statusText.classList.add("text-error");
             card.classList.add("shake");
         } finally {
-            startBtn.disabled = false;
-            restartBtn.disabled = false;
+            btn.disabled = false;
+            setLoading(btn, false);
         }
     }
 
@@ -55,14 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (!guess) {
             statusText.textContent = "Please enter a number.";
-            statusText.classList.add("text-error");
+            statusText.classList.add("text-warning");
             card.classList.add("shake");
             guessInput.focus();
             return;
         }
 
+        // Disable controls to prevent duplicate requests while processing
         guessBtn.disabled = true;
         guessInput.disabled = true;
+        setLoading(guessBtn, true);
         
         try {
             const response = await fetch("/guess", {
@@ -76,39 +98,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.error) {
                 statusText.textContent = data.error;
-                statusText.classList.add("text-error");
+                statusText.classList.add("text-warning");
                 card.classList.add("shake");
                 if (data.attempts_left !== undefined) {
-                    attemptsText.textContent = `Attempts left: ${data.attempts_left}`;
+                    attemptsText.textContent = data.attempts_left;
                 }
             } else {
                 statusText.textContent = data.status;
-                attemptsText.textContent = `Attempts left: ${data.attempts_left}`;
+                attemptsText.textContent = data.attempts_left;
                 
-                if (data.status.toLowerCase().includes("correct") || data.status.toLowerCase().includes("win")) {
+                const statusLower = data.status.toLowerCase();
+                
+                if (statusLower.includes("correct") || statusLower.includes("win")) {
                     statusText.classList.add("text-success");
                     card.classList.add("pulse");
-                } else {
+                } else if (statusLower.includes("high") || statusLower.includes("low")) {
+                    statusText.classList.add("text-warning");
+                    card.classList.add("shake");
+                } else if (statusLower.includes("over") || statusLower.includes("out of")) {
                     statusText.classList.add("text-error");
                     card.classList.add("shake");
+                } else {
+                    statusText.classList.add("text-info");
                 }
                 
                 if (data.game_over) {
+                    // UX: Ensure controls remain disabled after game ends
                     guessBtn.disabled = true;
                     guessInput.disabled = true;
                     gameOver.style.display = "block";
                     restartBtn.focus();
-                    return; // exit early so finally block doesn't re-enable
+                    return; // Exit early to prevent finally block from re-enabling
+                } else {
+                    // UX: Clear field after valid submission
+                    guessInput.value = "";
+                    guessInput.focus();
                 }
             }
-            
-            guessInput.value = "";
-            guessInput.focus();
         } catch (error) {
             statusText.textContent = "Error: Could not reach the server.";
             statusText.classList.add("text-error");
             card.classList.add("shake");
         } finally {
+            setLoading(guessBtn, false);
             // Only re-enable if the game hasn't ended
             if (gameOver.style.display !== "block") {
                 guessBtn.disabled = false;
@@ -121,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     restartBtn.addEventListener("click", startGame);
     guessBtn.addEventListener("click", submitGuess);
     
+    // UX: Pressing Enter submits the guess
     guessInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             submitGuess();
