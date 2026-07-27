@@ -12,14 +12,16 @@
 </head>
 <body>
     <main class="dashboard-card" id="card" aria-labelledby="dashboard-title">
-        <h1 id="dashboard-title">Number Guessing Dashboard</h1>
-        <p class="subtitle">Can you guess the secret number?</p>
+        <header>
+            <h1 id="dashboard-title">Number Guessing Dashboard</h1>
+            <p class="subtitle">Can you guess the secret number?</p>
+        </header>
         
-        <div id="game-setup">
+        <section id="game-setup">
             <button id="start-btn" class="primary-btn" aria-label="Start Game">Start Game</button>
-        </div>
+        </section>
 
-        <div id="game-active" style="display: none;">
+        <section id="game-active" style="display: none;">
             <div class="input-group">
                 <input type="number" id="guess-input" placeholder="Enter a number" aria-label="Enter your guess">
                 <button id="guess-btn" class="primary-btn" aria-label="Submit Guess">Submit Guess</button>
@@ -29,14 +31,14 @@
                 <p id="status-text" role="status">Click Start to play.</p>
                 <div class="attempts-badge" id="attempts-badge" aria-label="Attempts remaining">
                     <span class="attempts-label">Attempts Remaining</span>
-                    <span id="attempts-text" class="attempts-value"></span>
+                    <strong id="attempts-text" class="attempts-value"></strong>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="game-over" style="display: none;">
+        <section id="game-over" style="display: none;">
             <button id="restart-btn" class="secondary-btn" aria-label="Start New Game">New Game</button>
-        </div>
+        </section>
     </main>
 </body>
 </html>

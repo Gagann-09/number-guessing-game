@@ -12,19 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const attemptsText = document.getElementById("attempts-text");
     const card = document.getElementById("card");
 
-    // UX: Auto-select existing value on focus
-    guessInput.addEventListener("focus", () => {
-        guessInput.select();
-    });
+    // Auto-select existing value on focus
+    guessInput.addEventListener("focus", () => guessInput.select());
 
-    function clearAnimationClasses() {
+    function resetAnimations() {
         card.classList.remove("shake", "pulse");
         statusText.classList.remove("text-error", "text-success", "text-accent", "text-warning", "text-info");
-        // Force reflow to allow restarting animations on the same element
+        // Force reflow
         void card.offsetWidth;
     }
 
-    function setLoading(btn, isLoading) {
+    function toggleLoading(btn, isLoading) {
         if (isLoading) {
             btn.classList.add("is-loading");
             btn.setAttribute("aria-busy", "true");
@@ -34,117 +32,117 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function toggleGameState(isGameActive, isGameOver) {
+        gameSetup.style.display = isGameActive || isGameOver ? "none" : "block";
+        gameActive.style.display = isGameActive ? "block" : "none";
+        gameOver.style.display = isGameOver ? "block" : "none";
+    }
+
+    function updateStatus(message, type, animationClass = null) {
+        statusText.textContent = message;
+        statusText.classList.add(`text-${type}`);
+        if (animationClass) {
+            card.classList.add(animationClass);
+        }
+    }
+
+    function updateAttempts(attempts) {
+        if (attempts !== undefined) {
+            attemptsText.textContent = attempts;
+        }
+    }
+
+    function toggleInputs(disabled) {
+        guessBtn.disabled = disabled;
+        guessInput.disabled = disabled;
+    }
+
     async function startGame(e) {
         const btn = e.target || startBtn;
         btn.disabled = true;
-        setLoading(btn, true);
-        
-        clearAnimationClasses();
+        toggleLoading(btn, true);
+        resetAnimations();
         
         try {
             const response = await fetch("/start", { method: "POST" });
             const data = await response.json();
             
-            gameSetup.style.display = "none";
-            gameOver.style.display = "none";
-            gameActive.style.display = "block";
-            
-            statusText.textContent = data.message;
-            statusText.classList.add("text-info");
-            attemptsText.textContent = data.max_attempts;
+            toggleGameState(true, false);
+            updateStatus(data.message, "info");
+            updateAttempts(data.max_attempts);
             
             guessInput.value = "";
-            guessInput.disabled = false;
-            guessBtn.disabled = false;
-            
-            // UX: Auto-focus input after a game starts
+            toggleInputs(false);
             guessInput.focus();
         } catch (error) {
-            statusText.textContent = "Error: Could not reach the server.";
-            statusText.classList.add("text-error");
-            card.classList.add("shake");
+            updateStatus("Error: Could not reach the server.", "error", "shake");
         } finally {
             btn.disabled = false;
-            setLoading(btn, false);
+            toggleLoading(btn, false);
+        }
+    }
+
+    function handleGameEnd() {
+        toggleInputs(true);
+        toggleGameState(true, true);
+        restartBtn.focus();
+    }
+    
+    function processGuessStatus(data) {
+        const statusLower = data.status.toLowerCase();
+        if (statusLower.includes("correct") || statusLower.includes("win")) {
+            updateStatus(data.status, "success", "pulse");
+        } else if (statusLower.includes("high") || statusLower.includes("low")) {
+            updateStatus(data.status, "warning", "shake");
+        } else if (statusLower.includes("over") || statusLower.includes("out of")) {
+            updateStatus(data.status, "error", "shake");
+        } else {
+            updateStatus(data.status, "info");
         }
     }
 
     async function submitGuess() {
         const guess = guessInput.value.trim();
-        clearAnimationClasses();
+        resetAnimations();
         
         if (!guess) {
-            statusText.textContent = "Please enter a number.";
-            statusText.classList.add("text-warning");
-            card.classList.add("shake");
+            updateStatus("Please enter a number.", "warning", "shake");
             guessInput.focus();
             return;
         }
 
-        // Disable controls to prevent duplicate requests while processing
-        guessBtn.disabled = true;
-        guessInput.disabled = true;
-        setLoading(guessBtn, true);
+        toggleInputs(true);
+        toggleLoading(guessBtn, true);
         
         try {
             const response = await fetch("/guess", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ guess: guess })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ guess })
             });
             const data = await response.json();
 
             if (data.error) {
-                statusText.textContent = data.error;
-                statusText.classList.add("text-warning");
-                card.classList.add("shake");
-                if (data.attempts_left !== undefined) {
-                    attemptsText.textContent = data.attempts_left;
-                }
+                updateStatus(data.error, "warning", "shake");
+                updateAttempts(data.attempts_left);
             } else {
-                statusText.textContent = data.status;
-                attemptsText.textContent = data.attempts_left;
-                
-                const statusLower = data.status.toLowerCase();
-                
-                if (statusLower.includes("correct") || statusLower.includes("win")) {
-                    statusText.classList.add("text-success");
-                    card.classList.add("pulse");
-                } else if (statusLower.includes("high") || statusLower.includes("low")) {
-                    statusText.classList.add("text-warning");
-                    card.classList.add("shake");
-                } else if (statusLower.includes("over") || statusLower.includes("out of")) {
-                    statusText.classList.add("text-error");
-                    card.classList.add("shake");
-                } else {
-                    statusText.classList.add("text-info");
-                }
+                updateAttempts(data.attempts_left);
+                processGuessStatus(data);
                 
                 if (data.game_over) {
-                    // UX: Ensure controls remain disabled after game ends
-                    guessBtn.disabled = true;
-                    guessInput.disabled = true;
-                    gameOver.style.display = "block";
-                    restartBtn.focus();
-                    return; // Exit early to prevent finally block from re-enabling
+                    handleGameEnd();
+                    return;
                 } else {
-                    // UX: Clear field after valid submission
                     guessInput.value = "";
                     guessInput.focus();
                 }
             }
         } catch (error) {
-            statusText.textContent = "Error: Could not reach the server.";
-            statusText.classList.add("text-error");
-            card.classList.add("shake");
+            updateStatus("Error: Could not reach the server.", "error", "shake");
         } finally {
-            setLoading(guessBtn, false);
-            // Only re-enable if the game hasn't ended
+            toggleLoading(guessBtn, false);
             if (gameOver.style.display !== "block") {
-                guessBtn.disabled = false;
-                guessInput.disabled = false;
+                toggleInputs(false);
             }
         }
     }
@@ -153,10 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     restartBtn.addEventListener("click", startGame);
     guessBtn.addEventListener("click", submitGuess);
     
-    // UX: Pressing Enter submits the guess
     guessInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            submitGuess();
-        }
+        if (e.key === "Enter") submitGuess();
     });
 });
