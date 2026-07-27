@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Number Guessing Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Number Guessing Dashboard</h1>
-    
-    <div id="game-setup">
-        <button id="start-btn">Start Game</button>
-    </div>
-
-    <div id="game-active" style="display: none;">
-        <p id="status-text">Click Start to play.</p>
-        <p id="attempts-text"></p>
+    <div class="dashboard-card" id="card">
+        <h1>Number Guessing Dashboard</h1>
+        <p class="subtitle">Can you guess the secret number?</p>
         
-        <div>
-            <input type="text" id="guess-input" placeholder="Enter a number">
-            <button id="guess-btn">Submit Guess</button>
+        <div id="game-setup">
+            <button id="start-btn" class="primary-btn">Start Game</button>
         </div>
-    </div>
 
-    <div id="game-over" style="display: none;">
-        <button id="restart-btn">Play Again</button>
+        <div id="game-active" style="display: none;">
+            <div class="input-group">
+                <input type="number" id="guess-input" placeholder="Enter a number" aria-label="Enter a number">
+                <button id="guess-btn" class="primary-btn">Submit Guess</button>
+            </div>
+            
+            <div class="status-container">
+                <p id="status-text">Click Start to play.</p>
+                <p id="attempts-text"></p>
+            </div>
+        </div>
+
+        <div id="game-over" style="display: none;">
+            <button id="restart-btn" class="secondary-btn">New Game</button>
+        </div>
     </div>
 </body>
 </html>

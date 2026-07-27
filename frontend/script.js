@@ -10,10 +10,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const guessInput = document.getElementById("guess-input");
     const statusText = document.getElementById("status-text");
     const attemptsText = document.getElementById("attempts-text");
+    const card = document.getElementById("card");
+
+    function clearAnimationClasses() {
+        card.classList.remove("shake", "pulse");
+        statusText.classList.remove("text-error", "text-success", "text-accent");
+        // Force reflow to allow restarting animations on the same element
+        void card.offsetWidth;
+    }
 
     async function startGame() {
         startBtn.disabled = true;
         restartBtn.disabled = true;
+        clearAnimationClasses();
         
         try {
             const response = await fetch("/start", { method: "POST" });
@@ -24,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             gameActive.style.display = "block";
             
             statusText.textContent = data.message;
+            statusText.classList.add("text-accent");
             attemptsText.textContent = `Attempts left: ${data.max_attempts}`;
             guessInput.value = "";
             guessInput.disabled = false;
@@ -31,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
             guessInput.focus();
         } catch (error) {
             statusText.textContent = "Error: Could not reach the server.";
+            statusText.classList.add("text-error");
+            card.classList.add("shake");
         } finally {
             startBtn.disabled = false;
             restartBtn.disabled = false;
@@ -39,9 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function submitGuess() {
         const guess = guessInput.value.trim();
+        clearAnimationClasses();
         
         if (!guess) {
-            statusText.textContent = "Please enter a guess.";
+            statusText.textContent = "Please enter a number.";
+            statusText.classList.add("text-error");
+            card.classList.add("shake");
+            guessInput.focus();
             return;
         }
 
@@ -60,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.error) {
                 statusText.textContent = data.error;
+                statusText.classList.add("text-error");
+                card.classList.add("shake");
                 if (data.attempts_left !== undefined) {
                     attemptsText.textContent = `Attempts left: ${data.attempts_left}`;
                 }
@@ -67,10 +85,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 statusText.textContent = data.status;
                 attemptsText.textContent = `Attempts left: ${data.attempts_left}`;
                 
+                if (data.status.toLowerCase().includes("correct") || data.status.toLowerCase().includes("win")) {
+                    statusText.classList.add("text-success");
+                    card.classList.add("pulse");
+                } else {
+                    statusText.classList.add("text-error");
+                    card.classList.add("shake");
+                }
+                
                 if (data.game_over) {
                     guessBtn.disabled = true;
                     guessInput.disabled = true;
                     gameOver.style.display = "block";
+                    restartBtn.focus();
                     return; // exit early so finally block doesn't re-enable
                 }
             }
@@ -79,6 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
             guessInput.focus();
         } catch (error) {
             statusText.textContent = "Error: Could not reach the server.";
+            statusText.classList.add("text-error");
+            card.classList.add("shake");
         } finally {
             // Only re-enable if the game hasn't ended
             if (gameOver.style.display !== "block") {
